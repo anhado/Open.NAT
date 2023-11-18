@@ -45,7 +45,7 @@ namespace Open.Nat
 					   {
 						   {"NewRemoteHost", string.Empty},
 						   {"NewExternalPort", _mapping.PublicPort},
-						   {"NewProtocol", _mapping.Protocol == Protocol.Tcp ? "TCP" : "UDP"}
+						   {"NewProtocol", _mapping.Protocol == Protocol.TcpUpd ? "TCP or UDP" : (  _mapping.Protocol == Protocol.Tcp ? "TCP" : "UDP")}
 					   };
 		}
 	}

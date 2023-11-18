@@ -38,6 +38,11 @@ namespace Open.Nat
 		/// <summary>
 		/// Datagram Protocol
 		/// </summary>
-		Udp
-	}
+		Udp,
+
+        /// <summary>
+        /// Transport Control Protocol and Datagram Protocol
+        /// </summary>
+        TcpUpd
+    }
 }

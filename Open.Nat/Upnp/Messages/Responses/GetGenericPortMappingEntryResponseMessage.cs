@@ -41,9 +41,12 @@ namespace Open.Nat
 			RemoteHost = (genericMapping) ? data.GetXmlElementText("NewRemoteHost") : string.Empty;
 			ExternalPort = (genericMapping) ? Convert.ToInt32(data.GetXmlElementText("NewExternalPort")) : ushort.MaxValue;
 			if (genericMapping)
-				Protocol = data.GetXmlElementText("NewProtocol").Equals("TCP", StringComparison.InvariantCultureIgnoreCase)
-							   ? Protocol.Tcp
-							   : Protocol.Udp;
+				Protocol = data.GetXmlElementText("NewProtocol").Equals("TCP or UDP", StringComparison.InvariantCultureIgnoreCase)
+							   ? Protocol.TcpUpd
+							   : (data.GetXmlElementText("NewProtocol").Equals("TCP", StringComparison.InvariantCultureIgnoreCase)
+							   ? Protocol.TcpUpd
+							   : Protocol.Udp);
+
 			else
 				Protocol = Protocol.Udp;
 

@@ -383,7 +383,7 @@ namespace Open.Nat
 #if NET35
 		public override Task<Mapping> GetSpecificMappingAsync(Protocol protocol, int publicPort)
 		{
-			Guard.IsTrue(protocol == Protocol.Tcp || protocol == Protocol.Udp, "protocol");
+			Guard.IsTrue(protocol == Protocol.Tcp || protocol == Protocol.Udp || protocol == Protocol.TcpUpd, "protocol");
 			Guard.IsInRange(publicPort, 0, ushort.MaxValue, "port");
 
 			NatDiscoverer.TraceSource.LogInfo("GetSpecificMappingAsync - Getting mapping for protocol: {0} port: {1}", Enum.GetName(typeof(Protocol), protocol), publicPort);

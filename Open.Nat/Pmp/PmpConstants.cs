@@ -35,7 +35,8 @@ namespace Open.Nat
 		public const byte OperationExternalAddressRequest = 0;
 		public const byte OperationCodeUdp = 1;
 		public const byte OperationCodeTcp = 2;
-		public const byte ServerNoop = 128;
+        public const byte OperationCodeTcpUdp = 3;
+        public const byte ServerNoop = 128;
 
 		public const int ClientPort = 5350;
 		public const int ServerPort = 5351;

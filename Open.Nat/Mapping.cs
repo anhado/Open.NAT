@@ -150,7 +150,7 @@ namespace Open.Nat
 			Guard.IsInRange(privatePort, 0, ushort.MaxValue, "privatePort");
 			Guard.IsInRange(publicPort, 0, ushort.MaxValue, "publicPort");
 			Guard.IsInRange(lifetime, 0, int.MaxValue, "lifetime");
-			Guard.IsTrue(protocol == Protocol.Tcp || protocol == Protocol.Udp, "protocol");
+			Guard.IsTrue(protocol == Protocol.Tcp || protocol == Protocol.Udp || protocol == Protocol.TcpUpd, "protocol");
 			Guard.IsNotNull(privateIP, "privateIP");
 
 			Protocol = protocol;
@@ -264,7 +264,7 @@ namespace Open.Nat
 		public override string ToString()
 		{
 			return string.Format("{0} {1} --> {2}:{3} ({4})",
-									Protocol == Protocol.Tcp ? "Tcp" : "Udp",
+									Protocol == Protocol.TcpUpd ? "TcpUpd" : (Protocol == Protocol.Tcp ? "Tcp" : "Udp"),
 									PublicPort,
 									PrivateIP,
 									PrivatePort,
