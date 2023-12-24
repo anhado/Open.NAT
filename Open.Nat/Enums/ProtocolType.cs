@@ -27,22 +27,23 @@
 namespace Open.Nat
 {
 	/// <summary>
-	/// Protocol to allow/disallow 
+	///     Protocol to allow/disallow
 	/// </summary>
 	public enum Protocol
-	{
-		/// <summary>
-		/// Transport Control Protocol
-		/// </summary>
-		Tcp,
-		/// <summary>
-		/// Datagram Protocol
-		/// </summary>
-		Udp,
+    {
+	    /// <summary>
+	    ///     Transport Control Protocol
+	    /// </summary>
+	    Tcp,
 
-        /// <summary>
-        /// Transport Control Protocol and Datagram Protocol
-        /// </summary>
-        TcpUpd
+	    /// <summary>
+	    ///     Datagram Protocol
+	    /// </summary>
+	    Udp,
+
+	    /// <summary>
+	    ///     Transport Control Protocol and Datagram Protocol
+	    /// </summary>
+	    TcpUpd
     }
 }

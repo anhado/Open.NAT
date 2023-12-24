@@ -31,18 +31,18 @@ using System.Xml;
 
 namespace Open.Nat
 {
-    internal class GetExternalIPAddressResponseMessage : ResponseMessageBase
+    internal class GetExternalIpAddressResponseMessage : ResponseMessageBase
     {
-        public GetExternalIPAddressResponseMessage(XmlDocument response, string serviceType)
+        public GetExternalIpAddressResponseMessage(XmlDocument response, string serviceType)
             : base(response, serviceType, "GetExternalIPAddressResponseMessage")
         {
             string ip = GetNode().GetXmlElementText("NewExternalIPAddress");
 
             IPAddress ipAddr;
             if (IPAddress.TryParse(ip, out ipAddr))
-                ExternalIPAddress = ipAddr;
+                ExternalIpAddress = ipAddr;
         }
 
-        public IPAddress ExternalIPAddress { get; private set; }
+        public IPAddress ExternalIpAddress { get; private set; }
     }
 }
