@@ -74,6 +74,20 @@ namespace Open.Nat
                                         }, null, cancelationToken);
             return _devices;
         }
+        public async Task<IEnumerable<NatDevice>> Search()
+        {
+            await Task.Factory.StartNew(_ =>
+                                        {
+                                            NatDiscoverer.TraceSource.LogInfo("Searching for: {0}", GetType().Name);
+                                         
+                                                Discover();
+                                                Receive();
+                                           
+
+                                            CloseUdpClients();
+                                        }, null);
+            return _devices;
+        }
 #endif
 
         private void Discover(CancellationToken cancelationToken)
@@ -84,6 +98,22 @@ namespace Open.Nat
                 try
                 {
                     Discover(socket, cancelationToken);
+                }
+                catch (Exception e)
+                {
+                    NatDiscoverer.TraceSource.LogError("Error searching {0} - Details:", GetType().Name);
+                    NatDiscoverer.TraceSource.LogError(e.ToString());
+                }
+        }
+
+        private void Discover()
+        {
+            if (DateTime.UtcNow < NextSearch) return;
+
+            foreach (UdpClient socket in UdpClients)
+                try
+                {
+                    Discover(socket);
                 }
                 catch (Exception e)
                 {
@@ -107,7 +137,21 @@ namespace Open.Nat
             }
         }
 
+        private void Receive()
+        {
+            foreach (UdpClient client in UdpClients.Where(x => x.Available > 0))
+            { 
+                IPAddress  localHost    = ((IPEndPoint)client.Client.LocalEndPoint).Address;
+                IPEndPoint receivedFrom = new IPEndPoint(IPAddress.None, 0);
+                byte[]     buffer       = client.Receive(ref receivedFrom);
+                NatDevice  device       = AnalyseReceivedResponse(localHost, buffer, receivedFrom);
 
+                if (device != null) RaiseDeviceFound(device);
+            }
+        }
+
+
+        protected abstract void Discover(UdpClient client);
         protected abstract void Discover(UdpClient client, CancellationToken cancelationToken);
 
         public abstract NatDevice AnalyseReceivedResponse(IPAddress localAddress, byte[] response, IPEndPoint endpoint);

@@ -115,6 +115,29 @@ namespace Open.Nat
             }
         }
 
+        protected override void Discover(UdpClient client)
+        {
+            // Sort out the time for the next search first. The spec says the 
+            // timeout should double after each attempt. Once it reaches 64 seconds
+            // (and that attempt fails), assume no devices available
+            NextSearch =  DateTime.UtcNow.AddMilliseconds(_timeout);
+            _timeout   *= 2;
+
+            if (_timeout >= 3000)
+            {
+                _timeout   = 250;
+                NextSearch = DateTime.UtcNow.AddSeconds(10);
+                return;
+            }
+
+            // The nat-pmp search message. Must be sent to GatewayIP:53531
+            byte[] buffer = { PmpConstants.Version, PmpConstants.OperationExternalAddressRequest };
+            foreach (IPEndPoint gatewayEndpoint in _gatewayLists[client])
+            {
+                client.Send(buffer, buffer.Length, gatewayEndpoint);
+            }
+        }
+
         private bool IsSearchAddress(IPAddress address)
         {
             return _gatewayLists.Values.SelectMany(x => x)

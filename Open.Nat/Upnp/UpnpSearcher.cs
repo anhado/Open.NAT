@@ -70,7 +70,10 @@ namespace Open.Nat
                 foreach (IPAddress ipAddress in ips)
                     try
                     {
-                        clients.Add(new UdpClient(new IPEndPoint(ipAddress, 0)));
+                        if (ipAddress.AddressFamily==AddressFamily.InterNetwork)
+                        { 
+                            clients.Add(new UdpClient(new IPEndPoint(ipAddress, 0)));
+                        }
                     }
                     catch (Exception)
                     {
@@ -97,6 +100,18 @@ namespace Open.Nat
             }
         }
 
+        protected override void Discover(UdpClient client)
+        {
+            // for testing use: 
+            //    <code>var ip = IPAddress.Broadcast;</code>
+            Discover(client, WellKnownConstants.Pv4MulticastAddress);
+            if (Socket.OSSupportsIPv6)
+            {
+                Discover(client, WellKnownConstants.Pv6LinkLocalMulticastAddress);
+                Discover(client, WellKnownConstants.Pv6LinkSiteMulticastAddress);
+            }
+        }
+
         private void Discover(UdpClient client, IPAddress address, CancellationToken cancelationToken)
         {
             if (!IsValidClient(client.Client, address)) return;
@@ -114,6 +129,27 @@ namespace Open.Nat
                 for (int i = 0; i < 3; i++)
                 {
                     if (cancelationToken.IsCancellationRequested) return;
+                    client.Send(data, data.Length, searchEndpoint);
+                }
+            }
+        }
+
+        private void Discover(UdpClient client, IPAddress address)
+        {
+            if (!IsValidClient(client.Client, address)) return;
+
+            NextSearch = DateTime.UtcNow.AddSeconds(1);
+            IPEndPoint searchEndpoint = new IPEndPoint(address, 1900);
+
+            foreach (string serviceType in ServiceTypes)
+            {
+                string datax = DiscoverDeviceMessage.Encode(serviceType, address);
+                byte[] data  = Encoding.ASCII.GetBytes(datax);
+
+                // UDP is unreliable, so send 3 requests at a time (per Upnp spec, sec 1.1.2)
+                // Yes, however it works perfectly well with just 1 request.
+                for (int i = 0; i < 3; i++)
+                {
                     client.Send(data, data.Length, searchEndpoint);
                 }
             }
